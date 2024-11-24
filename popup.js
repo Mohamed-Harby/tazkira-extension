@@ -12,6 +12,7 @@ function loadSettings() {
         document.getElementById('duration').value = settings.duration;
         document.getElementById('theme-toggle').checked = settings.darkMode;
         updateTheme(settings.darkMode);
+        updateBoxColors();
     });
 }
 
@@ -24,8 +25,9 @@ function saveSettings() {
     };
 
     chrome.storage.sync.set(settings, () => {
-        showSaveMessage();
+        // showSaveMessage();
         updateTheme(settings.darkMode);
+        updateBoxColors();
         // Notify background script to update alarm
         chrome.runtime.sendMessage({ type: 'UPDATE_SETTINGS', settings });
     });
@@ -43,8 +45,52 @@ function updateTheme(isDark) {
     document.body.classList.toggle('dark-mode', isDark);
 }
 
+// Update settings
+function updateSettings() {
+    const settings = {
+        interval: document.getElementById('interval').value,
+        duration: document.getElementById('duration').value,
+        darkMode: document.getElementById('theme-toggle').checked
+    };
+
+    chrome.storage.sync.set(settings, function () {
+        console.log('Settings updated:', settings);
+    });
+}
+
+// Update box colors
+function updateBoxColors() {
+    const settings = {
+        interval: document.getElementById('interval').value,
+        duration: document.getElementById('duration').value,
+        darkMode: document.getElementById('theme-toggle').checked
+    };
+    chrome.storage.sync.set({ darkMode: settings.darkMode }, () => {
+        console.log('Dark mode setting updated:', settings.darkMode);
+    });
+    const box = document.querySelector('.tazkira-box'); // Target the currently displayed box
+    if (box) { // Ensure the box exists
+        if (settings.darkMode) {
+            box.classList.add('dark-mode');
+        } else {
+            box.classList.remove('dark-mode');
+        }
+    }
+}
+
 // Event listeners
-document.addEventListener('DOMContentLoaded', loadSettings);
+document.addEventListener('DOMContentLoaded', () => {
+    loadSettings();
+    const inputs = document.querySelectorAll('input, select, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('input', () => {
+            updateSettings();
+            updateBoxColors();
+        });
+    });
+    // Initial color update
+    updateBoxColors();
+});
 
 // Save settings when inputs change
 document.getElementById('interval').addEventListener('change', saveSettings);

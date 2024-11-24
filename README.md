@@ -30,16 +30,47 @@
 
 ستظهر الإضافة الأذكار في الزاوية اليمنى السفلى من علامة التبويب النشطة في متصفحك وفقًا للفاصل الزمني المحدد.
 
+---
+
+# Tazkira - Islamic Supplication Reminder Extension
+
+A Chrome extension that displays beautiful Islamic supplications (Adhkar) as periodic reminders in your browser.
+
+## Features
+
+- 🕌 Trusted Islamic supplications from the Quran and Sunnah
+- 🔔 Configurable reminder intervals
+- 🌙 Dark mode support
+- 🎨 Compact and user-friendly design
+- 📜 Arabic text with references
+- ⚡ Lightweight performance
+
+## Installation
+
+1. Clone this repository or download the ZIP file
+2. Open Chrome and navigate to `chrome://extensions/`
+3. Enable "Developer mode" in the top right corner
+4. Click "Load unpacked" and select the extension directory
+
+## Usage
+
+After installation:
+
+1. Click the Tazkira icon in the toolbar to open settings
+2. Customize your preferences:
+   - Reminder interval (5 seconds to 1 hour)
+   - Display duration (3 to 60 seconds)
+   - Toggle dark/light mode
+
+The extension will display the supplications in the bottom right corner of your active browser tab according to the set interval.
+
 ## الإعدادات
 
 - **فاصل التذكير**: الافتراضي هو 300 ثانية (5 دقائق)
 - **مدة العرض**: الافتراضي هو 10 ثوانٍ
 - **الوضع الليلي**: التبديل بين الثيمات الليلية والنهارية
 
-
-
 ## المساهمة
-
 
 يمكنك المساهمة من خلال إضافة المزيد من الأدعية. إذا كنت ترغب في إضافة أدعية جديدة، يرجى اتباع الخطوات التالية:
 - قم بإنشاء ملف جديد في مجلد "duas" يحتوي على النص العربي والأنجليزي للأدعية الجديدة.

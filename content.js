@@ -58,3 +58,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         showDuaaBox(message.duaa, message.settings);
     }
 });
+
+// Listen for changes to dark mode setting in chrome.storage.sync
+chrome.storage.onChanged.addListener((changes, namespace) => {
+    if (namespace === 'sync' && changes.darkMode) {
+        const darkModeEnabled = changes.darkMode.newValue;
+        const box = document.querySelector('.tazkira-box');
+        if (box) {
+            if (darkModeEnabled) {
+                box.classList.add('dark-mode');
+            } else {
+                box.classList.remove('dark-mode');
+            }
+        }
+    }
+});

@@ -1,4 +1,3 @@
-
 // Default settings
 const DEFAULT_SETTINGS = {
     interval: 300,
@@ -11,34 +10,39 @@ console.log('Background script starting...');
 // Show random duaa box
 async function showDuaaBox() {
     console.log('Preparing to show duaa...');
-    const randomDuaa = duaas[Math.floor(Math.random() * duaas.length)];
-    const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
-
+    
     try {
-        // Get only active tabs
+        // Get only active tabs first to fail fast if none exist
         const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-
-        if (tabs.length > 0) {
-            const activeTab = tabs[0];
-            // Inject the content script if not already injected
-            await chrome.scripting.executeScript({
-                target: { tabId: activeTab.id },
-                files: ['content.js']
-            });
-
-            // Send message to the active tab
-            await chrome.tabs.sendMessage(activeTab.id, {
-                type: 'SHOW_DUAA',
-                duaa: randomDuaa,
-                settings: {
-                    duration: settings.duration * 1000, // Convert to milliseconds
-                    darkMode: settings.darkMode
-                }
-            });
-            console.log('Sent duaa to active tab:', activeTab.id);
-        } else {
+        if (!tabs.length) {
             console.log('No active tabs found');
+            return;
         }
+
+        const activeTab = tabs[0];
+        
+        // Get settings and prepare duaa in parallel
+        const [settings, randomDuaa] = await Promise.all([
+            chrome.storage.sync.get(DEFAULT_SETTINGS),
+            Promise.resolve(duaas[Math.floor(Math.random() * duaas.length)])
+        ]);
+
+        // Inject the content script if not already injected
+        await chrome.scripting.executeScript({
+            target: { tabId: activeTab.id },
+            files: ['content.js']
+        });
+
+        // Send message to the active tab
+        await chrome.tabs.sendMessage(activeTab.id, {
+            type: 'SHOW_DUAA',
+            duaa: randomDuaa,
+            settings: {
+                duration: settings.duration * 1000,
+                darkMode: settings.darkMode
+            }
+        });
+        console.log('Sent duaa to active tab:', activeTab.id);
     } catch (error) {
         console.error('Error showing duaa:', error);
     }
@@ -88,130 +92,32 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 // Log that script has finished loading
 console.log('Background script loaded successfully!');
 
-
-
-
 // Collection of duaas
-const duaas = [
-    {
-        arabic: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
-        reference: "البقرة: ٢٠١"
-    },
-    {
-        arabic: "رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي",
-        reference: "طه: ٢٥-٢٦"
-    },
-    {
-        arabic: "اللَّهُمَّ إِنِّي أَسْأَلُكَ الْهُدَى وَالتُّقَى وَالْعَفَافَ وَالْغِنَى",
-        reference: "صحيح مسلم"
-    },
-    {
-        arabic: "سُبْحـانَ اللهِ وَبِحَمْـدِهِ سُبْحـانَ اللهِ العَظيـم",
-        reference: "صحيح البخاري"
-    },
-    {
-        arabic: "اللَّهُمَّ اغْفِرْ لِي، وَارْحَمْنِي، وَاهْدِنِي، وَعَافِنِي وَارْزُقْنِي",
-        reference: "صحيح مسلم"
-    },
-    {
-        arabic: "رَبِّ زِدْنِي عِلْمًا",
-        reference: "طه: ١١٤"
-    },
-    {
-        arabic: "حَسْبِيَ اللَّهُ لَا إِلَهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ",
-        reference: "التوبة: ١٢٩"
-    },
-    {
-        arabic: "رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِن لَّدُنكَ رَحْمَةً",
-        reference: "آل عمران: ٨"
-    },
-    {
-        arabic: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ الْهَمِّ وَالْحَزَنِ، وَالْعَجْزِ وَالْكَسَلِ، وَالْبُخْلِ وَالْجُبْنِ، وَضَلَعِ الدَّيْنِ وَغَلَبَةِ الرِّجَالِ",
-        reference: "صحيح البخاري"
-    },
-    {
-        arabic: "رَبِّ اجْعَلْنِي مُقِيمَ الصَّلَاةِ وَمِن ذُرِّيَّتِي رَبَّنَا وَتَقَبَّلْ دُعَاء",
-        reference: "إبراهيم: ٤٠"
-    },
-    {
-        arabic: "اللَّهُمَّ أَصْلِحْ لِي دِينِي الَّذِي هُوَ عِصْمَةُ أَمْرِي، وَأَصْلِحْ لِي دُنْيَايَ الَّتِي فِيهَا مَعَاشِي",
-        reference: "صحيح مسلم"
-    },
-    {
-        arabic: "رَبِّ أَعُوذُ بِكَ مِنْ هَمَزَاتِ الشَّيَاطِينِ وَأَعُوذُ بِكَ رَبِّ أَن يَحْضُرُونِ",
-        reference: "المؤمنون: ٩٧-٩٨"
+let duaas = [];
+
+// Load duaas with caching
+async function loadDuaas() {
+    try {
+        // Try to get from cache first
+        const cache = await chrome.storage.local.get('duaasCache');
+        if (cache.duaasCache) {
+            duaas = cache.duaasCache;
+            console.log('Duaas loaded from cache:', duaas.length);
+            return;
+        }
+
+        // If not in cache, fetch from file
+        const response = await fetch(chrome.runtime.getURL('duaas.json'));
+        const data = await response.json();
+        duaas = data.duaas;
+        
+        // Cache the duaas
+        await chrome.storage.local.set({ 'duaasCache': duaas });
+        console.log('Duaas loaded and cached:', duaas.length);
+    } catch (error) {
+        console.error('Error loading duaas:', error);
     }
-    ,
-    {
-        arabic: "اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ عِلْمٍ لَا يَنْفَعُ، وَمِنْ قَلْبٍ لَا يَخْشَعُ، وَمِنْ نَفْسٍ لَا تَشْبَعُ، وَمِنْ دَعْوَةٍ لَا يُسْتَجَابُ لَهَا",
-        reference: "صحيح ابن ماجه"
-    },
-    {
-        arabic: "اللَّهُمَّ اغْفِرْ لِي خَطِيئَةً وَعَمْدًا، وَخَطَإَ السَّهْوِ وَالنِّسْيَانِ، وَمَا أَنْتَ أَعْلَمُ بِهِ مِنِّي",
-        reference: "صحيح ابن ماجه"
-    },
-    {
-        arabic: "اللَّهُمَّ اجْعَلْ لِي مِنْ أَمْرِي فَرَجاً وَمَخْرَجاً، وَاجْعَلْ لِي مِنْ خَشْيَتِكَ وِقَايَةً، وَفَرَجاً وَمَخْرَجاً مِنْ عَذَابِكَ",
-        reference: "صحيح مسلم"
-    },
-    {
-        arabic: "اللَّهُمَّ لَا تَدَعْ لِي ذَنْبًا إِلَّا غَفَرْتَهُ، وَلَا هَمًّا إِلَّا فَرَّجْتَهُ، وَلَا سُقْمًا إِلَّا شَفَيْتَهُ",
-        reference: "صحيح ابن ماجه"
-    },
-    {
-        arabic: "اللَّهُمَّ إِنِّي أَسْأَلُكَ بِالنُّورِ الَّذِي كُنْتَ تَكَلَّمَ بِهِ فِي الْقُرْآنِ، أَنْ يَكْفِيَ لِي مِنْ أَمْرِ دُنْيَايَ وَدِينِي",
-        reference: "مسند أحمد"
-    },
-    {
-        arabic: "اللَّهُمَّ إِنِّي أَسْأَلُكَ بِالنُّورِ الَّذِي كُنْتَ تَكَلَّمَ بِهِ فِي الْقُرْآنِ، أَنْ تُخْرِجَنِي مِنْ الظُّلْمِ إِلَى النُّورِ",
-        reference: "مسند أحمد"
-    },
-    {
-        arabic: "اللَّهُمَّ إِنِّي أَسْأَلُكَ بِالنُّورِ الَّذِي كُنْتَ تَكَلَّمَ بِهِ فِي الْقُرْآنِ، أَنْ تَجْعَلَ لِي مِنْ أَمْرِ دُنْيَايَ وَدِينِي فَرَجاً وَمَخْرَجاً",
-        reference: "مسند أحمد"
-    },
-    {
-        arabic: "اللَّهُمَّ إِنِّي أَسْأَلُكَ بِالنُّورِ الَّذِي كُنْتَ تَكَلَّمَ بِهِ فِي الْقُرْآنِ، أَنْ تُخْرِجَنِي مِنْ دَلَالِ الْخَيْرِ إِلَى دَلَالِ الشَّرِّ",
-        reference: "مسند أحمد"
-    },
-    {
-        arabic: "اللَّهُمَّ إِنِّي أَسْأَلُكَ بِالنُّورِ الَّذِي كُنْتَ تَكَلَّمَ بِهِ فِي الْقُرْآنِ، أَنْ تَجْعَلَ لِي مِنْ أَمْرِ دُنْيَايَ وَدِينِي فَرَجاً وَمَخْرَجاً مِنْ عَذَابِكَ",
-        reference: "مسند أحمد"
-    },
-    {
-        arabic: "اللَّهُمَّ أَسْأَلُكَ بِالنُّورِ الَّذِي كُنْتَ تَكَلَّمَ بِهِ فِي الْقُرْآنِ، أَنْ تَجْعَلَ لِي مِنْ أَمْرِ دُنْيَايَ وَدِينِي فَرَجاً وَمَخْرَجاً",
-        reference: "مسند أحمد"
-    },
-    {
-        arabic: "اللَّهُمَّ أَسْأَلُكَ بِالنُّورِ الَّذِي كُنْتَ تَكَلَّمَ بِهِ فِي الْقُرْآنِ، أَنْ تُخْرِجَنِي مِنْ الظُّلْمِ إِلَى النُّورِ",
-        reference: "مسند أحمد"
-    },
-    {
-        arabic: "اللَّهُمَّ أَسْأَلُكَ بِالنُّورِ الَّذِي كُنْتَ تَكَلَّمَ بِهِ فِي الْقُرْآنِ، أَنْ تَجْعَلَ لِي مِنْ أَمْرِ دُنْيَايَ وَدِينِي فَرَجاً وَمَخْرَجاً مِنْ عَذَابِكَ",
-        reference: "مسند أحمد"
-    },
-    {
-        arabic: "اللَّهُمَّ أَسْأَلُكَ بِالنُّورِ الَّذِي كُنْتَ تَكَلَّمَ بِهِ فِي الْقُرْآنِ، أَنْ تُخْرِجَنِي مِنْ دَلَالِ الْخَيْرِ إِلَى دَلَالِ الشَّرِّ",
-        reference: "مسند أحمد"
-    },
-    {
-        arabic: "اللَّهُمَّ اجْعَلْ لِي مِنْ أَمْرِي فَرَجاً وَمَخْرَجاً، وَاجْعَلْ لِي مِنْ خَشْيَتِكَ وِقَايَةً، وَفَرَجاً وَمَخْرَجاً مِنْ عَذَابِكَ",
-        reference: "مسند أحمد"
-    },
-    {
-        arabic: "اللَّهُمَّ لَا تَدَعْ لِي ذَنْبًا إِلَّا غَفَرْتَهُ، وَلَا هَمًّا إِلَّا فَرَّجْتَهُ، وَلَا سُقْمًا إِلَّا شَفَيْتَهُ",
-        reference: "مسند أحمد"
-    },
-    {
-        arabic: "اللَّهُمَّ إِنِّي أَسْأَلُكَ بِالنُّورِ الَّذِي كُنْتَ تَكَلَّمَ بِهِ فِي الْقُرْآنِ، أَنْ تَجْعَلَ لِي مِنْ أَمْرِ دُنْيَايَ وَدِينِي فَرَجاً وَمَخْرَجاً",
-        reference: "مسند أحمد"
-    },
-    {
-        arabic: "اللَّهُمَّ إِنِّي أَسْأَلُكَ بِالنُّورِ الَّذِي كُنْتَ تَكَلَّمَ بِهِ فِي الْقُرْآنِ، أَنْ تُخْرِجَنِي مِنْ الظُّلْمِ إِلَى النُّورِ",
-        reference: "مسند أحمد"
-    },
-    {
-        arabic: "اللَّهُمَّ إِنِّي أَسْأَلُكَ بِالنُّورِ الَّذِي كُنْتَ تَكَلَّمَ بِهِ فِي الْقُرْآنِ، أَنْ تَجْعَلَ لِي مِنْ أَمْرِ دُنْيَايَ وَدِينِي فَرَجاً وَمَخْرَجاً مِنْ عَذَابِكَ",
-        reference: "مسند أحمد"
-    },
-];
+}
+
+// Load duaas when extension starts
+loadDuaas();
