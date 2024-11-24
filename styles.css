@@ -1,0 +1,144 @@
+/* Custom styles for notifications */
+.duaa-notification {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    margin: 16px;
+    max-width: 400px;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.duaa-arabic {
+    font-size: 1.3em;
+    margin-bottom: 12px;
+    text-align: right;
+    direction: rtl;
+    color: #040300;
+    line-height: 1.6;
+}
+
+.duaa-translation {
+    font-size: 1em;
+    color: #23313f;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.duaa-reference {
+    font-size: 1em;
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+.tazkira-box {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #fdfbec;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 5px 20px;
+    max-width: 350px;
+    z-index: 999999999;
+    font-family: Arial, sans-serif;
+    animation: slideIn 0.3s ease-out;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.tazkira-box.dark-mode {
+    background: #0a2749;
+    color: #ffffff;
+    border-color: rgb(128, 119, 83, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tazkira-box.hide {
+    animation: slideOut 0.3s ease-out forwards;
+}
+
+.tazkira-arabic {
+    font-size: 1.2em;
+    margin-bottom: 12px;
+    text-align: right;
+    direction: rtl;
+    color: #2c3e50;
+    line-height: 1.6;
+    margin-top: 1rem;
+    font-family: 'Traditional Arabic', Arial, sans-serif;
+}
+
+.dark-mode .tazkira-arabic {
+    color: #ecf0f1;
+}
+
+.tazkira-translation {
+    font-size: 0.95em;
+    color: #34495e;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.tazkira-reference {
+    font-size: 0.85em;
+    color: #7f8c8d;
+    /* font-style: italic; */
+    text-align: left;
+}
+
+.dark-mode .tazkira-reference {
+    color: #95a5a6;
+}
+
+.tazkira-close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    cursor: pointer;
+    color: #95a5a6;
+    font-size: 18px;
+    line-height: 1;
+    /* padding: 5px; */
+
+}
+
+.dark-mode .tazkira-close {
+    color: #7f8c8d;
+}
+
+.tazkira-close:hover {
+    color: #7f8c8d;
+}
+
+.dark-mode .tazkira-close:hover {
+    color: #95a5a6;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
