@@ -71,10 +71,23 @@
     line-height: 1.6;
     margin-top: 1rem;
     font-family: 'Traditional Arabic', Arial, sans-serif;
+    user-select: text;
+}
+
+.tazkira-arabic::selection,
+.tazkira-reference::selection {
+    background-color: rgb(190, 183, 161);
+    color: #fff;
 }
 
 .dark-mode .tazkira-arabic {
     color: #ecf0f1;
+}
+
+.dark-mode .tazkira-arabic::selection,
+.dark-mode .tazkira-reference::selection {
+    background-color: rgb(72, 76, 90);
+    color: #fff;
 }
 
 .tazkira-translation {
@@ -89,6 +102,7 @@
     color: #7f8c8d;
     /* font-style: italic; */
     text-align: left;
+    user-select: text;
 }
 
 .dark-mode .tazkira-reference {
@@ -103,6 +117,7 @@
     color: #95a5a6;
     font-size: 18px;
     line-height: 1;
+    user-select: none;
     /* padding: 5px; */
 
 }
