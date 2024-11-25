@@ -49,3 +49,18 @@ This project is licensed under the MIT License.
 ## Acknowledgments
 
 All supplications are taken from trusted Islamic sources including the Quran and authentic Hadith collections.
+
+
+# Demo
+
+
+https://github.com/user-attachments/assets/1b13f6de-abb0-47e7-a3d1-e9ff4108de16
+
+
+
+![Screenshot from 2024-11-25 13-52-23](https://github.com/user-attachments/assets/95e02c7d-3b67-45ca-b1da-efc1482140ca)
+![Screenshot from 2024-11-25 13-51-46](https://github.com/user-attachments/assets/2bb94b86-eaa9-4d88-9c67-e595784b1099)
+
+
+
+
