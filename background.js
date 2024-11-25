@@ -5,17 +5,12 @@ const DEFAULT_SETTINGS = {
     darkMode: false
 };
 
-console.log('Background script starting...');
-
 // Show random duaa box
 async function showDuaaBox() {
-    console.log('Preparing to show duaa...');
-    
     try {
         // Get only active tabs first to fail fast if none exist
         const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
         if (!tabs.length) {
-            console.log('No active tabs found');
             return;
         }
 
@@ -42,9 +37,8 @@ async function showDuaaBox() {
                 darkMode: settings.darkMode
             }
         });
-        console.log('Sent duaa to active tab:', activeTab.id);
     } catch (error) {
-        console.error('Error showing duaa:', error);
+        // Handle any errors
     }
 }
 
@@ -53,7 +47,6 @@ async function setupAlarm() {
     const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
     const intervalMinutes = settings.interval / 60; // Convert seconds to minutes
 
-    console.log('Setting up alarm for duaa reminders...');
     chrome.alarms.create('duaaReminder', {
         delayInMinutes: intervalMinutes,
         periodInMinutes: intervalMinutes
@@ -62,10 +55,8 @@ async function setupAlarm() {
 
 // Listen for extension installation
 chrome.runtime.onInstalled.addListener((details) => {
-    console.log('Extension installed/updated:', details);
     chrome.storage.sync.get(DEFAULT_SETTINGS, (settings) => {
         if (chrome.runtime.lastError) {
-            console.error('Error loading settings:', chrome.runtime.lastError);
             return;
         }
         showDuaaBox();  // Show first box immediately
@@ -76,7 +67,6 @@ chrome.runtime.onInstalled.addListener((details) => {
 // Listen for alarms
 chrome.alarms.onAlarm.addListener((alarm) => {
     if (alarm.name === 'duaaReminder') {
-        console.log('Duaa reminder alarm triggered');
         showDuaaBox();
     }
 });
@@ -84,13 +74,9 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 // Listen for settings updates
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.type === 'UPDATE_SETTINGS') {
-        console.log('Updating settings:', message.settings);
         setupAlarm(); // Recreate alarm with new interval
     }
 });
-
-// Log that script has finished loading
-console.log('Background script loaded successfully!');
 
 // Collection of duaas
 let duaas = [];
@@ -102,7 +88,6 @@ async function loadDuaas() {
         const cache = await chrome.storage.local.get('duaasCache');
         if (cache.duaasCache) {
             duaas = cache.duaasCache;
-            console.log('Duaas loaded from cache:', duaas.length);
             return;
         }
 
@@ -113,9 +98,8 @@ async function loadDuaas() {
         
         // Cache the duaas
         await chrome.storage.local.set({ 'duaasCache': duaas });
-        console.log('Duaas loaded and cached:', duaas.length);
     } catch (error) {
-        console.error('Error loading duaas:', error);
+        // Handle any errors
     }
 }
 

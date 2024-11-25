@@ -54,7 +54,6 @@ function updateSettings() {
     };
 
     chrome.storage.sync.set(settings, function () {
-        console.log('Settings updated:', settings);
     });
 }
 
@@ -66,7 +65,6 @@ function updateBoxColors() {
         darkMode: document.getElementById('theme-toggle').checked
     };
     chrome.storage.sync.set({ darkMode: settings.darkMode }, () => {
-        console.log('Dark mode setting updated:', settings.darkMode);
     });
     const box = document.querySelector('.tazkira-box'); // Target the currently displayed box
     if (box) { // Ensure the box exists

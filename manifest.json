@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Tazkira - Daily Duaa Reminders",
+  "name": "Tazkira - Duaa Reminder",
   "version": "1.0",
   "description": "Shows beautiful popup notifications containing duaas from Sunnah at specified intervals",
   "permissions": [
